@@ -1,4 +1,5 @@
 import type React from "react"
+import { AuthProvider } from "@/components/auth/auth-provider"
 
 /**
  * Dashboard route group layout
@@ -11,8 +12,8 @@ export default function DashboardRouteLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <AuthProvider>
       {children}
-    </>
+    </AuthProvider>
   )
 }

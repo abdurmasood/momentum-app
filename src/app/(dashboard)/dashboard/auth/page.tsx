@@ -44,8 +44,11 @@ export default function AuthHandler() {
         throw new Error('Token expired');
       }
 
-      // Store token securely
+      // Store token securely in localStorage
       localStorage.setItem('momentum_auth_token', token);
+      
+      // Also store in cookie for server-side access
+      document.cookie = `momentum_auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; secure; samesite=strict`;
       
       // Store user info if available
       if (payload.user) {

@@ -11,6 +11,12 @@ import { MARKETING_ROUTES } from '@/constants/routes'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // DEVELOPMENT MODE: Skip auth check in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔓 Development mode: Middleware auth check bypassed');
+    return NextResponse.next()
+  }
+
   // Skip auth check for the auth handler itself
   if (pathname === '/dashboard/auth') {
     return NextResponse.next()

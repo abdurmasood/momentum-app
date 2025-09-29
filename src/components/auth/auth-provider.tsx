@@ -17,6 +17,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    // DEVELOPMENT MODE: Skip auth check in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔓 Development mode: Auth check bypassed');
+      setIsChecking(false);
+      setIsAuthenticated(true);
+      return;
+    }
+
     // Skip auth check for the auth handler page
     if (pathname === '/dashboard/auth') {
       setIsChecking(false);

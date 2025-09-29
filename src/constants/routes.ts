@@ -1,16 +1,14 @@
 /**
  * Application route constants
  * 
- * Centralized route definitions to eliminate magic strings and ensure
- * consistent navigation throughout the application.
+ * Centralized route definitions for the Momentum dashboard application.
  */
 
 /**
  * Public routes - accessible without authentication
  */
 export const PUBLIC_ROUTES = {
-  HOME: "/",
-  LANDING: "/",
+  HOME: "/dashboard",
 } as const;
 
 /**
@@ -73,7 +71,7 @@ export const isProtectedRoute = (path: string): boolean => {
   return path.startsWith(DASHBOARD_ROUTES.ROOT);
 };
 
-export const isAuthRoute = (path: string): boolean => {
+export const isAuthRoute = (_path: string): boolean => {
   return false; // No auth routes available
 };
 

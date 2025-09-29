@@ -1,6 +1,7 @@
 {
-  "name": "momentum",
+  "name": "momentum-app",
   "version": "0.1.0",
+  "description": "Momentum Dashboard Application - Interactive dashboard with WebGL visualizations",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

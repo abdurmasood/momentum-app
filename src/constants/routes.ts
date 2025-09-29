@@ -2,13 +2,24 @@
  * Application route constants
  * 
  * Centralized route definitions for the Momentum dashboard application.
+ * Deployed at: trymomentum.ai/dashboard/*
  */
+
+/**
+ * External marketing routes
+ */
+export const MARKETING_ROUTES = {
+  HOME: "https://trymomentum.ai",
+  LOGIN: "https://trymomentum.ai/login",
+  SIGNUP: "https://trymomentum.ai/signup",
+} as const;
 
 /**
  * Public routes - accessible without authentication
  */
 export const PUBLIC_ROUTES = {
   HOME: "/dashboard",
+  AUTH_HANDLER: "/dashboard/auth", // Handles tokens from marketing site
 } as const;
 
 /**
@@ -83,8 +94,8 @@ export const isPublicRoute = (path: string): boolean => {
  * Default redirect routes
  */
 export const REDIRECT_ROUTES = {
-  AFTER_SIGN_OUT: PUBLIC_ROUTES.HOME,
-  UNAUTHORIZED: PUBLIC_ROUTES.HOME,
+  AFTER_SIGN_OUT: MARKETING_ROUTES.HOME, // Redirect to marketing site after logout
+  UNAUTHORIZED: MARKETING_ROUTES.LOGIN,   // Redirect to login page when unauthorized
 } as const;
 
 /**

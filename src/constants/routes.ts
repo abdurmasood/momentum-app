@@ -2,16 +2,22 @@
  * Application route constants
  * 
  * Centralized route definitions for the Momentum dashboard application.
- * Deployed at: trymomentum.ai/dashboard/*
+ * Uses environment variables for flexible deployment across different environments.
  */
+
+/**
+ * Get marketing site base URL from environment
+ * Falls back to production URL if not set
+ */
+const MARKETING_URL = process.env.NEXT_PUBLIC_MARKETING_URL || 'https://trymomentum.ai'
 
 /**
  * External marketing routes
  */
 export const MARKETING_ROUTES = {
-  HOME: "https://trymomentum.ai",
-  LOGIN: "https://trymomentum.ai/login",
-  SIGNUP: "https://trymomentum.ai/signup",
+  HOME: MARKETING_URL,
+  LOGIN: `${MARKETING_URL}/login`,
+  SIGNUP: `${MARKETING_URL}/signup`,
 } as const;
 
 /**

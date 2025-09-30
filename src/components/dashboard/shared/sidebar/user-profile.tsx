@@ -14,18 +14,38 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ChevronsUpDown, LogOut, Crown } from "lucide-react";
-import { useUser } from "@stackframe/stack";
+import { useUser } from "@/hooks/use-user";
 import { Logo } from "@/components/brand/logo";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 function UserProfileComponent() {
   const { isMobile } = useSidebar();
-  const user = useUser();
-  // Use available Stack Auth user properties
-  const displayName = user?.displayName || 
-                     user?.primaryEmail || 
-                     "User";
+  const router = useRouter();
+  const { user, loading } = useUser();
+  
+  // Display user name or email
+  const displayName = user?.name || user?.email || "User";
   const displayPlan = "Free";
+
+  // Show loading state
+  if (loading) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" disabled>
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-background text-foreground">
+              <Logo className="size-4" />
+            </div>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">Loading...</span>
+              <span className="truncate text-xs">Please wait</span>
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
 
   return (
     <SidebarMenu>
@@ -70,10 +90,17 @@ function UserProfileComponent() {
               className="gap-2 p-2 cursor-pointer"
               onClick={async () => {
                 try {
-                  await user?.signOut();
+                  const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                  });
+                  
+                  if (response.ok) {
+                    const data = await response.json();
+                    // Redirect to marketing site login
+                    window.location.href = data.redirectUrl;
+                  }
                 } catch (error) {
                   console.error('Failed to sign out:', error);
-                  // Could show a toast notification here in a real app
                 }
               }}
             >

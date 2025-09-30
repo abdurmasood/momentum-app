@@ -1,9 +1,9 @@
 import type React from "react"
-import { AuthProvider } from "@/components/auth/auth-provider"
 
 /**
  * Dashboard route group layout
- * Wrapper for authentication and dashboard-specific providers
+ * 
+ * Authentication is handled by middleware (src/middleware.ts)
  * The actual dashboard layout with sidebar is in dashboard/layout.tsx
  */
 export default function DashboardRouteLayout({
@@ -11,9 +11,5 @@ export default function DashboardRouteLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <AuthProvider>
-      {children}
-    </AuthProvider>
-  )
+  return <>{children}</>
 }

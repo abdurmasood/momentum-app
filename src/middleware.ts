@@ -1,44 +1,50 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { MARKETING_ROUTES } from '@/constants/routes'
+
+const MARKETING_URL = process.env.NEXT_PUBLIC_MARKETING_URL || 'https://trymomentum.ai'
 
 /**
  * Middleware to protect dashboard routes
  * 
- * Checks for authentication token and redirects unauthenticated 
- * users to the marketing site login page.
+ * Checks for JWT token cookie and redirects unauthenticated users to login.
+ * Token verification happens in API routes (which run in Node.js runtime).
+ * 
+ * Note: Middleware runs in Edge runtime which doesn't support jsonwebtoken,
+ * so we only check for token existence here. Full verification happens
+ * in API routes and protected page loads.
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-
-  // DEVELOPMENT MODE: Skip auth check in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('🔓 Development mode: Middleware auth check bypassed');
-    return NextResponse.next()
-  }
 
   // Skip auth check for the auth handler itself
   if (pathname === '/dashboard/auth') {
     return NextResponse.next()
   }
 
+  // DEVELOPMENT MODE: Optional auth bypass with env variable
+  if (process.env.NODE_ENV === 'development' && process.env.SKIP_AUTH_CHECK === 'true') {
+    console.log('🔓 Development mode: Auth check bypassed via SKIP_AUTH_CHECK');
+    return NextResponse.next()
+  }
+
   // Check if accessing dashboard routes
   if (pathname.startsWith('/dashboard')) {
-    // Check for auth token in cookies or headers
-    const authToken = request.cookies.get('momentum_auth_token')?.value
-    
-    // Also check localStorage via a custom header (if set by client)
-    const authHeader = request.headers.get('x-momentum-auth')
+    // Get auth token from cookie
+    const authToken = request.cookies.get('auth_token')?.value
 
     // If no token found, redirect to login
-    if (!authToken && !authHeader) {
-      console.log('No auth token found, redirecting to login')
-      return NextResponse.redirect(MARKETING_ROUTES.LOGIN)
+    if (!authToken) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('❌ No auth token found, redirecting to login')
+      }
+      return NextResponse.redirect(new URL(`${MARKETING_URL}/login`))
     }
 
-    // TODO: Optionally validate token here
-    // For now, just check if it exists
-    
+    // Token exists - allow access
+    // Full verification will happen when API routes are called
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Auth token found, granting access to:', pathname)
+    }
     return NextResponse.next()
   }
 

@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react";
-import { useState, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/shared/sidebar/app-sidebar";
 import { WaveLoader } from "@/components/ui/wave-loader";
@@ -12,25 +11,10 @@ export default function DashboardNewLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isInitialized, setIsInitialized] = useState(false);
   const { user, loading } = useUser();
 
-  useEffect(() => {
-    // Check for auth transition flag from the auth page
-    const isAuthTransition = sessionStorage.getItem('momentum_auth_transition');
-    
-    if (!loading) {
-      if (isAuthTransition) {
-        // Clear the auth transition flag
-        sessionStorage.removeItem('momentum_auth_transition');
-      }
-      // Show dashboard immediately once loading completes
-      setIsInitialized(true);
-    }
-  }, [loading, user]);
-
-  // Show loading state until everything is ready
-  if (!isInitialized || loading) {
+  // Show loading state while user data is being fetched
+  if (loading) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
         <WaveLoader />
@@ -38,7 +22,15 @@ export default function DashboardNewLayout({
     );
   }
 
-  // Only render dashboard UI when fully initialized
+  // Clear auth transition flag when user is loaded
+  if (typeof window !== 'undefined') {
+    const isAuthTransition = sessionStorage.getItem('momentum_auth_transition');
+    if (isAuthTransition) {
+      sessionStorage.removeItem('momentum_auth_transition');
+    }
+  }
+
+  // Render dashboard UI
   return (
     <div className="dark">
       <SidebarProvider>

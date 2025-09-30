@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Trash2, ExternalLink } from "lucide-react";
 import { useState, useCallback } from "react";
-// import { useUser } from "@stackframe/stack"; // Available for future use
+import { useUser } from "@/hooks/use-user";
 
 export default function SettingsPage() {
   const [isConnected, setIsConnected] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  // const user = useUser(); // Available for future use
+  const { user } = useUser();
 
   const handleGoogleCalendarConnect = useCallback(() => {
     if (isConnected) {

@@ -5,30 +5,40 @@ import { useState, useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/dashboard/shared/sidebar/app-sidebar";
 import { WaveLoader } from "@/components/ui/wave-loader";
+import { useUser } from "@/hooks/use-user";
 
 export default function DashboardNewLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { user, loading } = useUser();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    // Check for auth transition flag from the auth page
+    const isAuthTransition = sessionStorage.getItem('momentum_auth_transition');
+    
+    if (!loading) {
+      if (isAuthTransition) {
+        // Clear the auth transition flag
+        sessionStorage.removeItem('momentum_auth_transition');
+      }
+      // Show dashboard immediately once loading completes
+      setIsInitialized(true);
+    }
+  }, [loading, user]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
+  // Show loading state until everything is ready
+  if (!isInitialized || loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
         <WaveLoader />
       </div>
     );
   }
 
+  // Only render dashboard UI when fully initialized
   return (
     <div className="dark">
       <SidebarProvider>

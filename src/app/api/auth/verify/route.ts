@@ -49,22 +49,21 @@ export async function POST(request: NextRequest) {
     // Verify JWT token
     const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload
 
-    // Token is valid - create response with cookie
-    const response = NextResponse.json({
-      success: true,
-      user: decoded.user
-    })
-
-    // Set cookie on response object
-    response.cookies.set('auth_token', token, {
+    // Set cookie using Next.js cookies API
+    const cookieStore = await cookies()
+    cookieStore.set('auth_token', token, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: '/',
     })
 
-    return response
+    // Return success response
+    return NextResponse.json({
+      success: true,
+      user: decoded.user
+    })
 
   } catch (error) {
     console.error('Token verification failed:', error)

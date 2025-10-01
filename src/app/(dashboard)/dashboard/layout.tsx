@@ -22,14 +22,6 @@ export default function DashboardNewLayout({
     );
   }
 
-  // Clear auth transition flag when user is loaded
-  if (typeof window !== 'undefined') {
-    const isAuthTransition = sessionStorage.getItem('momentum_auth_transition');
-    if (isAuthTransition) {
-      sessionStorage.removeItem('momentum_auth_transition');
-    }
-  }
-
   // Render dashboard UI
   return (
     <div className="dark">
